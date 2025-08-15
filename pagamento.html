@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pagamento - Got Everything</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body {
+      background: linear-gradient(180deg, #0b0b0b 0%, #151515 100%);
+      color: #f2f2f2;
+      min-height: 100vh;
+      margin: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    #stars-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      background: transparent;
+    }
+    .pay-card {
+      max-width: 420px;
+      margin: 60px auto 0 auto;
+      background: rgba(30,30,30,0.88);
+      border-radius: 18px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+      padding: 32px 28px;
+      text-align: center;
+      border: 1px solid #232323;
+      position: relative;
+      z-index: 2;
+      animation: fadeInHome 0.7s;
+    }
+    .pay-card h1 {
+      font-size: 2rem;
+      color: #ffd700;
+      margin-bottom: 18px;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 12px #222;
+    }
+    .pay-card p {
+      font-size: 1.08rem;
+      color: #e9e9e9;
+      margin-bottom: 18px;
+    }
+    .pay-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 18px;
+    }
+    .pay-form input {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #232323;
+      background: #181818;
+      color: #fff;
+      font-size: 1rem;
+    }
+    .pay-form button {
+      padding: 10px 0;
+      background: #ffd700;
+      color: #222;
+      font-weight: bold;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 1.08rem;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+    .pay-form button:hover {
+      background: #ffe066;
+    }
+    .pay-success {
+      color: #5cff7a;
+      font-size: 1.1rem;
+      margin-top: 18px;
+      font-weight: bold;
+      display: none;
+    }
+    @keyframes fadeInHome {
+      from { opacity: 0; transform: translateY(30px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+  </style>
+</head>
+<body>
+<canvas id="stars-bg"></canvas>
+<div class="pay-card">
+  <h1>Pagamento</h1>
+  <p>Selecione o método de pagamento para finalizar a sua compra.<br>Os seus dados estão seguros e protegidos.</p>
+  
+  <!-- Botão voltar - inicialmente escondido -->
+  <button id="back-btn" style="display:none; margin-bottom:18px; padding:8px 18px; background:#222; color:#ffd700; border-radius:8px; border:none; cursor:pointer;">← Voltar</button>
+  
+  <form class="pay-form" id="pay-method-form">
+    <label>
+      <input type="radio" name="metodo" value="cartao" checked> Cartão de Crédito/Débito
+    </label>
+    <label>
+      <input type="radio" name="metodo" value="paypal"> PayPal
+    </label>
+    <label>
+      <input type="radio" name="metodo" value="transferencia"> Transferência Bancária
+    </label>
+    <label>
+      <input type="radio" name="metodo" value="revolut"> Revolut
+    </label>
+    <button type="submit">Continuar</button>
+  </form>
+  
+  <form class="pay-form" id="pay-form" style="display:none;">
+    <div id="pay-fields-cartao" style="display:none;">
+      <input type="text" placeholder="Nome no Cartão" required />
+      <input type="text" placeholder="Número do Cartão" maxlength="19" required />
+      <input type="text" placeholder="Validade (MM/AA)" maxlength="5" required />
+      <input type="text" placeholder="CVC" maxlength="4" required />
+    </div>
+    <div id="pay-fields-paypal" style="display:none;">
+      <input type="email" placeholder="Email PayPal" required />
+    </div>
+    <div id="pay-fields-transferencia" style="display:none;">
+      <p style="color:#ffd700;">IBAN para transferência:<br><b>PT50 0002 0123 1234 5678 9015 4</b></p>
+      <input type="text" placeholder="Nome do Titular" required />
+      <input type="text" placeholder="Comprovativo de transferência (opcional)" />
+    </div>
+    <div id="pay-fields-revolut" style="display:none;">
+      <p style="color:#ffd700;">Revolut: <b>@got.everything</b></p>
+      <input type="text" placeholder="Nome do Titular" required />
+      <input type="text" placeholder="Comprovativo Revolut (opcional)" />
+    </div>
+    <button type="submit">Finalizar Pagamento</button>
+  </form>
+  <div class="pay-success" id="pay-success">Pagamento efetuado com sucesso! Obrigado pela sua compra.</div>
+</div>
+<script>
+  // Botão voltar
+  const backBtn = document.getElementById('back-btn');
+  const methodForm = document.getElementById('pay-method-form');
+  const payForm = document.getElementById('pay-form');
+  
+  // Função para voltar à seleção de métodos
+  backBtn.onclick = function() {
+    payForm.style.display = 'none';
+    methodForm.style.display = 'flex';
+    backBtn.style.display = 'none';
+  };
+
+  // Seleção do método
+  const fields = {
+    cartao: document.getElementById('pay-fields-cartao'),
+    paypal: document.getElementById('pay-fields-paypal'),
+    transferencia: document.getElementById('pay-fields-transferencia'),
+    revolut: document.getElementById('pay-fields-revolut')
+  };
+
+  methodForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    methodForm.style.display = 'none';
+    payForm.style.display = 'flex';
+    backBtn.style.display = 'inline-block'; // Mostrar botão voltar
+    
+    const metodo = document.querySelector('input[name="metodo"]:checked').value;
+    Object.keys(fields).forEach(k => fields[k].style.display = 'none');
+    fields[metodo].style.display = 'block';
+  });
+
+  payForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    document.getElementById('pay-success').style.display = 'block';
+    backBtn.style.display = 'none'; // Esconder botão voltar após pagamento
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 2500);
+  });
+
+  // Estrelas animadas no fundo
+  (function(){
+    const canvas = document.getElementById('stars-bg');
+    const ctx = canvas.getContext('2d');
+    let w = window.innerWidth, h = window.innerHeight;
+    canvas.width = w;
+    canvas.height = h;
+
+    function resize() {
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.width = w;
+      canvas.height = h;
+    }
+    window.addEventListener('resize', resize);
+
+    const numStars = 120;
+    const stars = [];
+    for(let i=0; i<numStars; i++){
+      stars.push({
+        x: Math.random()*w,
+        y: Math.random()*h,
+        r: Math.random()*1.2+0.5,
+        speed: Math.random()*0.4+0.1
+      });
+    }
+
+    function animate(){
+      ctx.clearRect(0,0,w,h);
+      for(const star of stars){
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.r, 0, 2*Math.PI);
+        ctx.fillStyle = "#fff";
+        ctx.globalAlpha = Math.random()*0.5+0.5;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        star.y += star.speed;
+        if(star.y > h){
+          star.y = 0;
+          star.x = Math.random()*w;
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  })();
+</script>
+</body>
+</html>
