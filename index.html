@@ -1,317 +1,92 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Loja Noturna</title>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-<style>
-/* ===== Tema Noturno com Estrelas ===== */
-body {
-    margin: 0;
-    font-family: 'Roboto', sans-serif;
-    background: radial-gradient(#0b0b2a, #000);
-    color: #ffffff;
-    overflow-x: hidden;
-}
-
-.stars {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    z-index: -1;
-}
-
-/* Header */
-header {
-    background-color: rgba(20,20,50,0.85);
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    backdrop-filter: blur(5px);
-}
-
-header h1 {
-    color: #ffd700;
-    font-size: 2rem;
-}
-
-nav a {
-    margin-left: 1rem;
-    color: #ffffff;
-    font-weight: bold;
-    text-decoration: none;
-    transition: 0.3s;
-}
-
-nav a:hover {
-    color: #ff4c4c;
-}
-
-/* Menu de categorias */
-.category-menu {
-    display: flex;
-    justify-content: center;
-    margin: 2rem 0;
-    flex-wrap: wrap;
-}
-
-.category-menu button {
-    background: rgba(50,50,80,0.85);
-    border: none;
-    color: #fff;
-    padding: 0.8rem 1.5rem;
-    margin: 0.5rem;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-.category-menu button:hover {
-    background: #ff4c4c;
-}
-
-/* Produtos */
-.products {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1.5rem;
-    padding: 0 2rem 2rem;
-    transition: all 0.5s ease;
-}
-
-.product-card {
-    background: rgba(30,30,60,0.85);
-    padding: 1rem;
-    border-radius: 15px;
-    text-align: center;
-    transform: translateY(0);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.product-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 10px 25px rgba(255,255,255,0.2);
-}
-
-.product-card img {
-    max-width: 100%;
-    border-radius: 10px;
-}
-
-.product-card h3 {
-    margin: 0.8rem 0 0.4rem;
-}
-
-.product-card p {
-    font-size: 0.9rem;
-    color: #cccccc;
-}
-
-/* Promoções/Destaques */
-.promo-section {
-    background: rgba(50,0,70,0.7);
-    padding: 2rem;
-    text-align: center;
-    margin: 2rem;
-    border-radius: 15px;
-}
-
-.promo-section h2 {
-    color: #ffd700;
-    margin-bottom: 1rem;
-}
-
-.promo-section p {
-    color: #fff;
-}
-
-/* Carrinho */
-.cart {
-    position: fixed;
-    top: 80px;
-    right: 20px;
-    background: rgba(50,50,80,0.95);
-    padding: 1rem;
-    border-radius: 15px;
-    width: 250px;
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.cart h3 {
-    margin-top: 0;
-    color: #ffd700;
-}
-
-.cart-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-}
-
-.cart-item button {
-    background: #ff4c4c;
-    border: none;
-    color: #fff;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-/* Footer */
-footer {
-    background: rgba(20,20,50,0.85);
-    text-align: center;
-    padding: 1rem;
-    font-size: 0.9rem;
-}
-
-/* Animação das estrelas */
-@keyframes twinkle {
-    0%, 100% {opacity: 0.8;}
-    50% {opacity: 0.2;}
-}
-.star {
-    position: absolute;
-    background: white;
-    border-radius: 50%;
-    opacity: 0.8;
-    animation: twinkle linear infinite;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Got Everything</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-
-<div class="stars" id="stars-container"></div>
-
-<header>
-    <h1>Loja Noturna</h1>
+<canvas id="stars-bg"></canvas>
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <img src="logo.png" alt="Logo" id="sidebar-logo" />
     <nav>
-        <a href="#">Home</a>
-        <a href="#">Sobre</a>
-        <a href="#">Contato</a>
+      <ul>
+        <li onclick="showCategory('home')">Home</li>
+        <li onclick="showCategory('electronics')">Eletrónica</li>
+        <li onclick="showCategory('watches')">Relógios</li>
+        <li onclick="showCategory('shoes')">Ténis</li>
+        <li onclick="showCategory('earrings')">Brincos</li>
+        <li onclick="showCategory('feedbacks')">Feedbacks</li>
+      </ul>
     </nav>
-</header>
+    <button id="cart-btn">🛒 Carrinho</button>
+  </aside>
 
-<section class="promo-section">
-    <h2>Promoções Imperdíveis!</h2>
-    <p>Confira nossos produtos com desconto especial desta semana.</p>
-</section>
+  <!-- Top bar auth -->
+  <div id="auth-bar">
+    <span id="greeting" style="display:none;"></span>
+    <div id="auth-buttons">
+      <button id="login-btn" onclick="showLogin()">Login</button>
+      <button id="signup-btn" onclick="showSignup()">Sign Up</button>
+    </div>
+    <button id="logout-btn" style="display:none;" onclick="logout()">Sair</button>
+  </div>
 
-<section class="category-menu">
-    <button onclick="showCategory('relogios')">Relógios</button>
-    <button onclick="showCategory('sapatos')">Sapatos</button>
-    <button onclick="showCategory('brincos')">Brincos</button>
-    <button onclick="showCategory('eletronicos')">Eletrônicos</button>
-</section>
+  <!-- Main content -->
+  <main id="main">
+    <div id="home" class="section active"></div>
+    <div id="electronics" class="section"></div>
+    <div id="watches" class="section"></div>
+    <div id="shoes" class="section"></div>
+    <div id="earrings" class="section"></div>
+    <div id="feedbacks" class="section"></div>
+  </main>
 
-<section class="products" id="products-container">
-    <!-- Produtos aparecem aqui -->
-</section>
-
-<div class="cart" id="cart">
-    <h3>Carrinho</h3>
+  <!-- Drawer do carrinho (mesmo sítio de antes) -->
+  <div id="cart-drawer">
+    <h3>Seu Carrinho</h3>
     <div id="cart-items"></div>
-    <p id="cart-total">Total: €0</p>
-    <button onclick="checkout()">Finalizar Compra</button>
+    <p class="cart-total">Total: 0.00€</p>
+  </div>
+
+  <!-- Modais de autenticação -->
+  <div id="modal-overlay" class="hidden" onclick="closeModals()"></div>
+
+  <div id="login-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="login-title">
+    <h2 id="login-title">Entrar</h2>
+    <input id="login-user" placeholder="Utilizador" />
+    <input id="login-pass" type="password" placeholder="Palavra-passe" />
+    <div class="modal-actions">
+      <button onclick="doLogin()">Entrar</button>
+      <button class="secondary" onclick="closeModals()">Cancelar</button>
+    </div>
+    <p id="login-error" class="error"></p>
+  </div>
+
+  <div id="signup-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="signup-title">
+    <h2 id="signup-title">Criar conta</h2>
+    <input id="signup-user" placeholder="Utilizador"/>
+    <input id="signup-pass" type="password" placeholder="Palavra-passe"/>
+    <div class="modal-actions">
+      <button onclick="doSignup()">Registar</button>
+      <button class="secondary" onclick="closeModals()">Cancelar</button>
+    </div>
+    <p id="signup-error" class="error"></p>
+  </div>
+
+<!-- Modal de Produto -->
+<div id="product-modal" class="modal hidden">
+  <span id="modal-close" style="cursor:pointer; float:right; font-weight:bold;">&times;</span>
+  <h2 id="modal-title">Produto</h2>
+  <img id="modal-image" src="" alt="Imagem do Produto" style="width:100%; border-radius:8px; margin-bottom:10px;">
+  <p id="modal-description">Descrição do produto</p>
 </div>
+<div id="modal-overlay" class="hidden"></div>
 
-<footer>
-    &copy; 2025 Loja Noturna. Todos os direitos reservados.
-</footer>
 
-<script>
-// ===== Produtos =====
-const productsData = {
-    relogios: [
-        {name: "Relógio Clássico", price: 120, img: "https://via.placeholder.com/200x200?text=Relógio"},
-        {name: "Smartwatch", price: 200, img: "https://via.placeholder.com/200x200?text=Smartwatch"}
-    ],
-    sapatos: [
-        {name: "Tênis Casual", price: 80, img: "https://via.placeholder.com/200x200?text=Sapato"},
-        {name: "Sapato Social", price: 150, img: "https://via.placeholder.com/200x200?text=Sapato"}
-    ],
-    brincos: [
-        {name: "Brinco Ouro", price: 60, img: "https://via.placeholder.com/200x200?text=Brinco"},
-        {name: "Brinco Prata", price: 45, img: "https://via.placeholder.com/200x200?text=Brinco"}
-    ],
-    eletronicos: [
-        {name: "Fone Bluetooth", price: 50, img: "https://via.placeholder.com/200x200?text=Fone"},
-        {name: "Câmera Digital", price: 300, img: "https://via.placeholder.com/200x200?text=Câmera"}
-    ]
-};
 
-// Carrinho
-let cart = [];
-
-function showCategory(category) {
-    const container = document.getElementById('products-container');
-    container.innerHTML = '';
-    if(productsData[category]) {
-        productsData[category].forEach(product => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            card.innerHTML = `
-                <img src="${product.img}" alt="${product.name}">
-                <h3>${product.name}</h3>
-                <p>€${product.price}</p>
-                <button onclick="addToCart('${product.name}', ${product.price})">Adicionar ao carrinho</button>
-            `;
-            container.appendChild(card);
-        });
-    }
-}
-
-function addToCart(name, price){
-    cart.push({name, price});
-    renderCart();
-}
-
-function renderCart(){
-    const container = document.getElementById('cart-items');
-    container.innerHTML = '';
-    let total = 0;
-    cart.forEach((item, index) => {
-        total += item.price;
-        const div = document.createElement('div');
-        div.className = 'cart-item';
-        div.innerHTML = `
-            <span>${item.name} - €${item.price}</span>
-            <button onclick="removeFromCart(${index})">X</button>
-        `;
-        container.appendChild(div);
-    });
-    document.getElementById('cart-total').innerText = `Total: €${total}`;
-}
-
-function removeFromCart(index){
-    cart.splice(index,1);
-    renderCart();
-}
-
-function checkout(){
-    alert("Funcionalidade de pagamento futura via HTTPS segura!");
-}
-
-// Mostra primeira categoria por padrão
-showCategory('relogios');
-
-// ===== Estrelas =====
-const starsContainer = document.getElementById('stars-container');
-for(let i=0;i<100;i++){
-    const star = document.createElement('div');
-    star.className = 'star';
-    star.style.width = `${Math.random()*2+1}px`;
-    star.style.height = star.style.width;
-    star.style.top = `${Math.random()*100}%`;
-    star.style.left = `${Math.random()*100}%`;
-    star.style.animationDuration = `${Math.random()*3+2}s`;
-    starsContainer.appendChild(star);
-}
-</script>
-
+  <script src="script.js"></script>
 </body>
 </html>
